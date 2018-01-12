@@ -16,5 +16,34 @@ class Persona
      */
     private $id;
 
-    // add your own fields
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $nominativo;
+    
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $indirizzo;
+    
+    function getNominativo()
+    {
+        return $this->nominativo;
+    }
+
+    function getIndirizzo()
+    {
+        return $this->indirizzo;
+    }
+
+    function setNominativo($nominativo)
+    {
+        $this->nominativo = $nominativo;
+    }
+
+    function setIndirizzo($indirizzo)
+    {
+        $this->indirizzo = $indirizzo;
+    }
+
 }
