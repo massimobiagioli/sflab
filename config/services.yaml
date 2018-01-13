@@ -25,3 +25,6 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    App\Module\Dummy\Dummy:
+        factory:   'App\Module\Dummy\DummyFactory:createDummy'
+        arguments: ['%env(resolve:DUMMY_SERVICE_IMPL)%']
