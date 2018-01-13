@@ -26,22 +26,32 @@ class Persona
      */
     private $indirizzo;
     
-    function getNominativo()
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getNominativo()
     {
         return $this->nominativo;
     }
 
-    function getIndirizzo()
+    public function getIndirizzo()
     {
         return $this->indirizzo;
     }
 
-    function setNominativo($nominativo)
+    public function setNominativo($nominativo)
     {
         $this->nominativo = $nominativo;
     }
 
-    function setIndirizzo($indirizzo)
+    public function setIndirizzo($indirizzo)
     {
         $this->indirizzo = $indirizzo;
     }
