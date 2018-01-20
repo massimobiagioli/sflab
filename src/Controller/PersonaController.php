@@ -12,7 +12,7 @@ use App\Entity\Persona;
 class PersonaController extends Controller
 {
     /**
-     * @Route("/persona", name="persona_index")
+     * @Route("/__persona", name="persona_index")
      */
     public function index(Request $request)
     {
