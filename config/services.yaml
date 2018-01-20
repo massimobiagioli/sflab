@@ -28,3 +28,4 @@ services:
     App\Module\Dummy\Dummy:
         factory:   'App\Module\Dummy\DummyFactory:createDummy'
         arguments: ['%env(resolve:DUMMY_SERVICE_IMPL)%']
+        

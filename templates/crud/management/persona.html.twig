@@ -1,9 +1,16 @@
 {% extends "baseCrudManagement.html.twig" %}
 
 {% block title %}
-GESTIONE PERSONE
+    GESTIONE PERSONE
 {% endblock %}
 
-{% block body %}
-<div>PERSONE MANAGEMENT</div>
+{% block datatable_header %}
+    ELENCO PERSONE
 {% endblock %}
+
+{% block datatable_columns %}
+    <th>Id</th>
+    <th>Nominativo</th>
+    <th>Indirizzo</th>
+    <th></th>
+{% endblock %}    
