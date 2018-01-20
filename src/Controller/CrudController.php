@@ -8,16 +8,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use App\Service\ModelServiceManager;
-use App\Entity\Persona;
-
+use App\Service\QueryData;
+use App\Service\OrderCriterion;
+use App\Dictionary\ModelDictionaryManager;
 
 class CrudController extends Controller
 {
     private $modelServiceManager;
+    private $modelDictionaryManager;
     
-    public function __construct(ModelServiceManager $modelServiceManager)
+    public function __construct(ModelServiceManager $modelServiceManager, ModelDictionaryManager $modelDictionaryManager)
     {
         $this->modelServiceManager = $modelServiceManager;
+        $this->modelDictionaryManager = $modelDictionaryManager;
     }
     
     /**
@@ -42,29 +45,26 @@ class CrudController extends Controller
      */
     public function query(Request $request, $modelKey)
     {
+        // Get ModelDictionary
+        $modelDictionary = $this->modelDictionaryManager->getModelDictionary($modelKey);
+        
+        // Init QueryData
+        $queryData = new QueryData();
+        $queryData->setLimit($request->get('length'));
+        $queryData->setOffset($request->get('start'));
+        
+        // Add OrderCriterions to QueryData
+        $orderCriterion = $modelDictionary->dataTableToOrderCriterion($request->get('order'));
+        $queryData->addOrderCriterion($orderCriterion);
+        
+        // Get ModelService
         $modelService = $this->modelServiceManager->getModelService($modelKey);
-        $count = $modelService->count();
         
-        $repo = $this->getDoctrine()
-            ->getRepository(Persona::class);
+        // Call ModelService count() and query() methods
+        $count = $modelService->count($queryData);
+        $personaCollection = $modelService->query($queryData);
         
-//        // Count
-//        $count = $repo->createQueryBuilder('p')
-//            ->select('count(p.id)')
-//            ->getQuery()
-//            ->getSingleScalarResult();
-        
-        // TODO: Effettuare ricerca
-        $query = $repo->createQueryBuilder('p')
-//            ->where('p.nominativo LIKE :nominativo')
-//            ->setParameter('nominativo', '%adbe%')
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->setFirstResult($request->get('start'))
-            ->getQuery();
-        
-        $personaCollection = $query->getResult();
-        
+        // Prepare DataTable results
         $toReturn = [
             'draw' => intval($request->get('draw')),
             'recordsTotal' => $count,

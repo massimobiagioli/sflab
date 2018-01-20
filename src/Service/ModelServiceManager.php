@@ -2,11 +2,11 @@
 
 namespace App\Service;
 
-use App\Service\PersonaService;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ModelServiceManager
 {
+
     private $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
@@ -16,7 +16,14 @@ class ModelServiceManager
 
     public function getModelService($modelKey)
     {
-        return new PersonaService($this->entityManager);
+        try
+        {
+            $clazz = 'App\\Service\\' . ucwords($modelKey) . 'Service';
+            return new $clazz($this->entityManager);
+        } catch (Exception $ex)
+        {
+            return false;
+        }
     }
 
 }

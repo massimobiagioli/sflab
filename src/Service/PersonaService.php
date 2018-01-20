@@ -2,29 +2,15 @@
 
 namespace App\Service;
 
+use App\Service\BaseService;
+use App\Service\ModelService;
 use App\Entity\Persona;
-use Doctrine\ORM\EntityManagerInterface;
 
-class PersonaService
+class PersonaService extends BaseService implements ModelService
 {
-    private $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function getRepositoryClass()
     {
-        $this->entityManager = $entityManager;
-    }
-
-    public function count()
-    {
-        $repo = $this->entityManager->getRepository(Persona::class);
-
-        // Count
-        $count = $repo->createQueryBuilder('p')
-                ->select('count(p.id)')
-                ->getQuery()
-                ->getSingleScalarResult();
-
-        return $count;
+        return Persona::class;
     }
 
 }
