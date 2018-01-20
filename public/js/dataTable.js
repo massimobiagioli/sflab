@@ -2,7 +2,7 @@ $(function() {
     var getDataTableConfig = function(dataTableId, $dataTable) {
         dataTableConfig = {
             crud: {
-                "searching": false,
+                "searching": true,
                 "lengthChange": false,
                 "info": false,
                 "pageLength": $dataTable.data('pagelength'),

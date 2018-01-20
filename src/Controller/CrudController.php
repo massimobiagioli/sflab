@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use App\Service\ModelServiceManager;
 use App\Service\QueryData;
-use App\Service\OrderCriterion;
 use App\Dictionary\ModelDictionaryManager;
 
 class CrudController extends Controller
@@ -53,8 +52,12 @@ class CrudController extends Controller
         $queryData->setLimit($request->get('length'));
         $queryData->setOffset($request->get('start'));
         
+        // Add Filters to QueryData
+        $filters = $modelDictionary->filtersFromDataTable($request->get('search'));
+        $queryData->addFilters($filters);
+        
         // Add OrderCriterions to QueryData
-        $orderCriterion = $modelDictionary->dataTableToOrderCriterion($request->get('order'));
+        $orderCriterion = $modelDictionary->orderCriterionFromDataTable($request->get('order'));
         $queryData->addOrderCriterion($orderCriterion);
         
         // Get ModelService
@@ -62,28 +65,21 @@ class CrudController extends Controller
         
         // Call ModelService count() and query() methods
         $count = $modelService->count($queryData);
-        $personaCollection = $modelService->query($queryData);
+        $results = $modelService->query($queryData);
         
         // Prepare DataTable results
-        $toReturn = [
+        $dataTableResult = [
             'draw' => intval($request->get('draw')),
             'recordsTotal' => $count,
             'recordsFiltered' => $count,
             'data' => []
         ];
         
-        foreach ($personaCollection as $persona)
-        {
-            $toReturn['data'][] = [
-                $persona->getId(),
-                $persona->getNominativo(),
-                $persona->getIndirizzo(),
-                '<div>Actions ...</div>'
-            ];
-        }
+        // Adapct DataTable Result
+        $modelDictionary->adaptDataTableResult($results, $dataTableResult);
         
         return new Response(
-            json_encode($toReturn),
+            json_encode($dataTableResult),
             Response::HTTP_OK,
             array('content-type' => 'application/json')
         );
